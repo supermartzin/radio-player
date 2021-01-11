@@ -7,5 +7,15 @@
         public RadioStreamUrls StreamUrls { get; set; }
 
         public string WebsiteUrl { get; internal set; }
+
+        public string PlaylistUrl { get; set; }
+
+        public string GetStreamUrl(StreamQualityType streamQualityType) => streamQualityType switch
+        {
+            StreamQualityType.Low => StreamUrls.LowQualityUrl ?? StreamUrls.DefaultQualityUrl,
+            StreamQualityType.Medium => StreamUrls.MediumQualityUrl ?? StreamUrls.DefaultQualityUrl,
+            StreamQualityType.High => StreamUrls.HighQualityUrl ?? StreamUrls.DefaultQualityUrl,
+            _ => StreamUrls.DefaultQualityUrl
+        };
     }
 }
