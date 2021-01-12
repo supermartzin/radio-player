@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Windows.Data.Xml.Dom;
-using Radio.Player.Services.Utilities;
-using Rtvs.iRadio.Models;
+using System.Xml;
 
-namespace Rtvs.iRadio.Services
+using Radio.Player.Models;
+using Radio.Player.Services;
+using Radio.Player.Services.Utilities;
+
+namespace Radio.PLayer.Providers.Rtvs
 {
-    public class ScheduleService : IScheduleService
+    public class RtvsScheduleService : IScheduleService
     {
         public async Task<IEnumerable<ScheduleItem>> GetSchedule(RadioStationId stationId)
         {

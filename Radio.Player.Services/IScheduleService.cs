@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using Rtvs.iRadio.Models;
+using Radio.Player.Models;
 
-namespace Rtvs.iRadio.Services
+namespace Radio.Player.Services
 {
     public interface IScheduleService
     {
-        Task<IEnumerable<ScheduleItem>> GetSchedule(RadioStationId stationId);
+        Task<IEnumerable<ScheduleItem>> GetSchedule(RadioStation radioStation);
     }
 }

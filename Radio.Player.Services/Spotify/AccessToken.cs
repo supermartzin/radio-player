@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace Rtvs.iRadio.Services
+namespace Radio.Player.Services.Spotify
 {
     public class AccessToken
     {

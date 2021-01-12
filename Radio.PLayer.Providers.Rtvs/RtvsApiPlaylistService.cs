@@ -6,17 +6,18 @@ using System.Xml;
 using Microsoft.Extensions.Logging;
 
 using Radio.Player.Models;
+using Radio.Player.Services;
 using Radio.Player.Services.Utilities;
 
-namespace Radio.Player.Services
+namespace Radio.PLayer.Providers.Rtvs
 {
-    public class RtvsPlaylistService : IPlaylistService
+    public class RtvsApiPlaylistService : IPlaylistService
     {
         private const string DateTimeFormat = "yyyyMMddHHmmss zzz";
 
-        private readonly ILogger<RtvsPlaylistService> _logger;
+        private readonly ILogger<RtvsApiPlaylistService> _logger;
 
-        public RtvsPlaylistService(ILogger<RtvsPlaylistService> logger = null)
+        public RtvsApiPlaylistService(ILogger<RtvsApiPlaylistService> logger = null)
         {
             _logger = logger;
         }

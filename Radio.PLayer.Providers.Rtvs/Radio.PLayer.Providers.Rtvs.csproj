@@ -6,12 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Inflatable.Lastfm" Version="1.2.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.29" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Radio.Player.Models\Radio.Player.Models.csproj" />
+    <ProjectReference Include="..\Radio.Player.Services\Radio.Player.Services.csproj" />
   </ItemGroup>
 
 </Project>

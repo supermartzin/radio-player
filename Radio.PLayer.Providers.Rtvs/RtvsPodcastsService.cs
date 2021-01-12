@@ -7,9 +7,10 @@ using System.Xml;
 using Microsoft.Extensions.Logging;
 
 using Radio.Player.Models;
+using Radio.Player.Services;
 using Radio.Player.Services.Utilities;
 
-namespace Radio.Player.Services
+namespace Radio.PLayer.Providers.Rtvs
 {
     public class RtvsPodcastsService : IPodcastsService
     {

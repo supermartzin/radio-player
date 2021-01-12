@@ -5,9 +5,12 @@ using System.Threading.Tasks;
 using HtmlAgilityPack;
 
 using Radio.Player.Models;
+using Radio.Player.Services;
 using Radio.Player.Services.Utilities;
 
-namespace Radio.Player.Services
+using Radio.PLayer.Providers.Rtvs.Utilities;
+
+namespace Radio.PLayer.Providers.Rtvs
 {
     public class RtvsArticlesService : IArticlesService
     {
