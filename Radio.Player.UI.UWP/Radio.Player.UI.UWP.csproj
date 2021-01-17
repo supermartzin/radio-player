@@ -125,6 +125,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\WindowsBuiltInSensitiveDataStorage.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -167,9 +168,9 @@
       <Project>{302eef81-30be-493b-85dc-1121dacd8d96}</Project>
       <Name>Radio.Player.Models</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Radio.PLayer.Providers.Rtvs\Radio.PLayer.Providers.Rtvs.csproj">
+    <ProjectReference Include="..\Radio.PLayer.Providers.Rtvs\Radio.Player.Providers.Rtvs.csproj">
       <Project>{9a743fe9-2787-4f02-a9f0-a4e3a190a10f}</Project>
-      <Name>Radio.PLayer.Providers.Rtvs</Name>
+      <Name>Radio.Player.Providers.Rtvs</Name>
     </ProjectReference>
     <ProjectReference Include="..\Radio.Player.Services\Radio.Player.Services.csproj">
       <Project>{bba82c04-fe9e-4579-a8c4-7c524501bb76}</Project>
@@ -181,6 +182,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
