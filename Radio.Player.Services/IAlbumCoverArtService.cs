@@ -4,6 +4,6 @@ namespace Radio.Player.Services
 {
     public interface IAlbumCoverArtService
     {
-        Task<string> GetAlbumCoverUrl(string artist, string trackTitle);
+        Task<string> GetAlbumCoverUrlAsync(string artist, string trackTitle);
     }
 }

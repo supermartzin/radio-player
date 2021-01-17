@@ -10,6 +10,10 @@
 
         public string PlaylistUrl { get; set; }
 
+        public string PodcastsUrl { get; set; }
+
+        public string ScheduleUrl { get; set; }
+
         public string GetStreamUrl(StreamQualityType streamQualityType) => streamQualityType switch
         {
             StreamQualityType.Low => StreamUrls.LowQualityUrl ?? StreamUrls.DefaultQualityUrl,

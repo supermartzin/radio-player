@@ -22,7 +22,7 @@ namespace Radio.PLayer.Providers.Rtvs
             _logger = logger;
         }
 
-        public Task<Track> GetLatestTrack(RadioStation radioStation)
+        public Task<Track> GetLatestTrackAsync(RadioStation radioStation)
         {
             if (radioStation == null)
                 throw new ArgumentNullException(nameof(radioStation));
@@ -47,7 +47,7 @@ namespace Radio.PLayer.Providers.Rtvs
             });
         }
 
-        public Task<IEnumerable<Track>> GetLatestTracks(RadioStation radioStation, int count = 0)
+        public Task<IEnumerable<Track>> GetLatestTracksAsync(RadioStation radioStation, int count = 0)
         {
             if (radioStation == null)
                 throw new ArgumentNullException(nameof(radioStation));

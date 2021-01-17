@@ -7,8 +7,8 @@ namespace Radio.Player.Services
 {
     public interface IPlaylistService
     {
-        Task<Track> GetLatestTrack(RadioStation radioStation);
+        Task<Track> GetLatestTrackAsync(RadioStation radioStation);
 
-        Task<IEnumerable<Track>> GetLatestTracks(RadioStation radioStation, int count = 0);
+        Task<IEnumerable<Track>> GetLatestTracksAsync(RadioStation radioStation, int count = 0);
     }
 }

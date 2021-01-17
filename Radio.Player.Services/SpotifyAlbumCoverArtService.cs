@@ -14,6 +14,6 @@ namespace Radio.Player.Services
             _client = spotifyClient ?? throw new ArgumentNullException(nameof(spotifyClient));
         }
 
-        public async Task<string> GetAlbumCoverUrl(string artist, string trackTitle) => await _client.GetAlbumCoverUrl(artist, trackTitle).ConfigureAwait(false);
+        public async Task<string> GetAlbumCoverUrlAsync(string artist, string trackTitle) => await _client.GetAlbumCoverUrl(artist, trackTitle).ConfigureAwait(false);
     }
 }

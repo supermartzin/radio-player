@@ -7,6 +7,6 @@ namespace Radio.Player.Services
 {
     public interface IPodcastsService
     {
-        Task<IEnumerable<PodcastShow>> GetLatestPodcasts(int count = 0);
+        Task<IEnumerable<PodcastShow>> GetLatestPodcastsAsync(RadioStation radioStation, int count = 0);
     }
 }

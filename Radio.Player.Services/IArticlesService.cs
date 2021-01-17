@@ -6,6 +6,6 @@ namespace Radio.Player.Services
 {
     public interface IArticlesService
     {
-        Task<FullArticle> GetFullArticle(string articleUrl);
+        Task<FullArticle> GetFullArticleAsync(string articleUrl);
     }
 }

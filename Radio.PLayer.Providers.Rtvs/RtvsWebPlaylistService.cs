@@ -17,7 +17,7 @@ namespace Radio.PLayer.Providers.Rtvs
     {
         private const string DateTimeFormat = "d.MM.yyyy HH:mm";
 
-        public async Task<Track> GetLatestTrack(RadioStation radioStation)
+        public async Task<Track> GetLatestTrackAsync(RadioStation radioStation)
         {
             if (radioStation == null)
                 throw new ArgumentNullException(nameof(radioStation));
@@ -38,7 +38,7 @@ namespace Radio.PLayer.Providers.Rtvs
                             : CreateTrack(tds);
         }
 
-        public async Task<IEnumerable<Track>> GetLatestTracks(RadioStation radioStation, int count = 0)
+        public async Task<IEnumerable<Track>> GetLatestTracksAsync(RadioStation radioStation, int count = 0)
         {
             if (radioStation == null)
                 throw new ArgumentNullException(nameof(radioStation));

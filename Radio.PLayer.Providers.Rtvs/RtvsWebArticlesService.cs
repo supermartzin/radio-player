@@ -12,11 +12,11 @@ using Radio.PLayer.Providers.Rtvs.Utilities;
 
 namespace Radio.PLayer.Providers.Rtvs
 {
-    public class RtvsArticlesService : IArticlesService
+    public class RtvsWebArticlesService : IArticlesService
     {
         private const string DateTimeFormat = "d. MM. yyyy HH:mm";
 
-        public async Task<FullArticle> GetFullArticle(string articleUrl)
+        public async Task<FullArticle> GetFullArticleAsync(string articleUrl)
         {
             if (articleUrl == null)
                 return null;
@@ -31,10 +31,9 @@ namespace Radio.PLayer.Providers.Rtvs
                 html.LoadHtml(downloadedPage); // load a string
 
                 var articles = html.DocumentNode
-                    .Descendants("div")
-                    .Where(d => d.AttributeValueOrEmpty("class")
-                        .Contains("article"))
-                    .Select(ParseArticle);
+                                                         .Descendants("div")
+                                                         .Where(d => d.AttributeValueOrEmpty("class").Contains("article"))
+                                                         .Select(ParseArticle);
 
                 var article = articles.FirstOrDefault();
                 if (article == null)

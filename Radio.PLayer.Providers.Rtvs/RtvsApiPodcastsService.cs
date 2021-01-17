@@ -12,32 +12,31 @@ using Radio.Player.Services.Utilities;
 
 namespace Radio.PLayer.Providers.Rtvs
 {
-    public class RtvsPodcastsService : IPodcastsService
+    public class RtvsApiPodcastsService : IPodcastsService
     {
-        private readonly ILogger<RtvsPodcastsService> _logger;
-        private readonly string _latestPodcastsUrl;
+        private readonly ILogger<RtvsApiPodcastsService> _logger;
 
-        public RtvsPodcastsService(string latestPodcastsUrl, ILogger<RtvsPodcastsService> logger = null)
+        public RtvsApiPodcastsService(ILogger<RtvsApiPodcastsService> logger = null)
         {
-            _latestPodcastsUrl = latestPodcastsUrl ?? throw new ArgumentNullException(nameof(latestPodcastsUrl));
             _logger = logger;
         }
 
-        public async Task<IEnumerable<PodcastShow>> GetLatestPodcasts(int count = 0)
+        public async Task<IEnumerable<PodcastShow>> GetLatestPodcastsAsync(RadioStation radioStation, int count = 0)
         {
+            if (radioStation == null)
+                throw new ArgumentNullException(nameof(radioStation));
+
             try
             {
-                var uri = new Uri(_latestPodcastsUrl);
-                string archivePageContent;
+                var uri = new Uri(radioStation.PodcastsUrl);
 
-                using (var client = new HttpClient())
-                {
-                    archivePageContent = await client.GetStringAsync(uri).ConfigureAwait(false);
-                }
+                using var client = new HttpClient();
+                
+                var archivePageContent = await client.GetStringAsync(uri).ConfigureAwait(false);
 
                 var xmlDocument = new XmlDocument();
                 xmlDocument.LoadXml(archivePageContent);
-                
+
                 return xmlDocument.HasChildNodes
                             ? ParsePodcasts(xmlDocument.DocumentElement?.SelectSingleNode("channel"))
                             : Enumerable.Empty<PodcastShow>();
@@ -45,6 +44,12 @@ namespace Radio.PLayer.Providers.Rtvs
             catch (XmlException xmlEx)
             {
                 _logger?.LogError(xmlEx, $"Error getting latest podcasts from RTVS: {xmlEx.Message}");
+
+                return Enumerable.Empty<PodcastShow>();
+            }
+            catch (HttpRequestException hrEx)
+            {
+                _logger?.LogError(hrEx, $"Error getting latest podcasts from RTVS: {hrEx.Message}");
 
                 return Enumerable.Empty<PodcastShow>();
             }
