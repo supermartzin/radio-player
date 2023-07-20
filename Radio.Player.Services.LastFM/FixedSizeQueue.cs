@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace Radio.Player.Services.LastFM;
+namespace Radio.Player.Services.LastFm;
 
 internal class FixedSizeQueue<TElement>
 {

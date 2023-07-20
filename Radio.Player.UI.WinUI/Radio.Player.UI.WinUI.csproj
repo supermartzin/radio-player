@@ -37,9 +37,10 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Radio Player\Radio.Player.Models\Radio.Player.Models.csproj" />
     <ProjectReference Include="..\..\Radio Player\Radio.Player.Providers.Rtvs\Radio.Player.Providers.Rtvs.csproj" />
-    <ProjectReference Include="..\..\Radio Player\Radio.Player.Services\Radio.Player.Services.Contracts.csproj" />
+    <ProjectReference Include="..\Radio.Player.Services.Contracts\Radio.Player.Services.Contracts.csproj" />
+    <ProjectReference Include="..\Radio.Player.Services.LastFM\Radio.Player.Services.LastFm.csproj" />
+    <ProjectReference Include="..\Radio.Player.Services.Spotify\Radio.Player.Services.Spotify.csproj" />
   </ItemGroup>
 
   <!-- 

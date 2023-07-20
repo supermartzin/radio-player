@@ -1,18 +1,20 @@
 ﻿using IF.Lastfm.Core.Api;
 using IF.Lastfm.Core.Api.Enums;
 using IF.Lastfm.Core.Objects;
+using Microsoft.Extensions.Logging;
 
 using Radio.Player.Models;
 using Radio.Player.Services.Contracts;
-using Radio.Player.Services.Contracts.Factories;
 using Radio.Player.Services.Contracts.Models;
 
-namespace Radio.Player.Services.LastFM;
+namespace Radio.Player.Services.LastFm;
 
 public class LastFmScrobblingService : ITrackScrobblingService
 {
     private const int LastScrobbledTrackCapacity = 50;
-    
+
+    private readonly ILogger<LastFmScrobblingService>? _logger;
+
     private readonly ITrackScrobblingClientFactory<LastfmClient> _trackScrobblingClientFactory;
     private readonly FixedSizeQueue<Track> _lastScrobbledTracks;
 
@@ -20,10 +22,14 @@ public class LastFmScrobblingService : ITrackScrobblingService
 
     public string? AuthenticatedUserName => GetAuthenticatedUserName();
 
-    public LastFmScrobblingService(ITrackScrobblingClientFactory<LastfmClient> trackScrobblingClientFactory)
+    public LastFmScrobblingService(ITrackScrobblingClientFactory<LastfmClient> trackScrobblingClientFactory,
+                                   ILogger<LastFmScrobblingService>? logger = default)
     {
         _trackScrobblingClientFactory = trackScrobblingClientFactory
             ?? throw new ArgumentNullException(nameof(trackScrobblingClientFactory));
+        
+        _logger = logger;
+
         _lastScrobbledTracks = new FixedSizeQueue<Track>(LastScrobbledTrackCapacity);
     }
 

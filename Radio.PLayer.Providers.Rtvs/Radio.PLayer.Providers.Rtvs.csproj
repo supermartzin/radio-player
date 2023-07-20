@@ -12,8 +12,4 @@
     <PackageReference Include="System.Xml.XPath.XmlDocument" Version="4.3.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Radio.Player.Services\Radio.Player.Services.Contracts.csproj" />
-  </ItemGroup>
-
 </Project>

@@ -11,6 +11,6 @@ public class SpotifyAlbumCoverArtService : IAlbumCoverArtService
         _client = spotifyClient ?? throw new ArgumentNullException(nameof(spotifyClient));
     }
     
-    public async Task<string> GetAlbumCoverUrlAsync(string artist, string trackTitle, CancellationToken cancellationToken = default)
-        => await _client.GetAlbumCoverUrl(artist, trackTitle).ConfigureAwait(false);
+    public async Task<string?> GetAlbumCoverUrlAsync(string artist, string trackTitle, CancellationToken cancellationToken = default)
+        => await _client.GetAlbumCoverUrlAsync(artist, trackTitle, cancellationToken);
 }

@@ -2,5 +2,5 @@
 
 public interface IAlbumCoverArtService
 {
-    Task<string> GetAlbumCoverUrlAsync(string artist, string trackTitle, CancellationToken cancellationToken = default);
+    Task<string?> GetAlbumCoverUrlAsync(string artist, string trackTitle, CancellationToken cancellationToken = default);
 }

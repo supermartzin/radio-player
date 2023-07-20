@@ -26,7 +26,7 @@ public interface ISettingsService
 
     Task<string> GetSelectedRadioStationAsync(CancellationToken cancellationToken = default);
 
-    Task SaveSelectedRadioStation(string stationName, CancellationToken cancellationToken = default);
+    Task SaveSelectedRadioStationAsync(string stationName, CancellationToken cancellationToken = default);
 
     Task<bool> IsTrackScrobblingEnabledAsync(CancellationToken cancellationToken = default);
 
