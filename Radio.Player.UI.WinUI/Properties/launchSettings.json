@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Radio.Player.UI.WinUI (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Radio.Player.UI.WinUI (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

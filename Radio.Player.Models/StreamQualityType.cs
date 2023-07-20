@@ -1,10 +1,9 @@
-﻿namespace Radio.Player.Models
+﻿namespace Radio.Player.Models;
+
+public enum StreamQualityType
 {
-    public enum StreamQualityType
-    {
-        Default,
-        Low,
-        Medium,
-        High
-    }
+    Default,
+    Low,
+    Medium,
+    High
 }

@@ -6,9 +6,9 @@ using HtmlAgilityPack;
 
 using Radio.Player.Models;
 using Radio.Player.Services;
-using Radio.Player.Services.Utilities;
-
 using Radio.PLayer.Providers.Rtvs.Utilities;
+using Radio.Player.Services.Contracts;
+using Radio.Player.Services.Contracts.Utilities;
 
 namespace Radio.PLayer.Providers.Rtvs
 {
