@@ -1,102 +1,99 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using HtmlAgilityPack;
+﻿using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 
 using Radio.Player.Models;
-using Radio.Player.Services;
-using Radio.PLayer.Providers.Rtvs.Utilities;
+using Radio.Player.Providers.Rtvs.Utilities;
 using Radio.Player.Services.Contracts;
-using Radio.Player.Services.Contracts.Utilities;
 
-namespace Radio.PLayer.Providers.Rtvs
+namespace Radio.Player.Providers.Rtvs;
+
+public class RtvsWebPlaylistService : IPlaylistService
 {
-    public class RtvsWebPlaylistService : IPlaylistService
+    private const string DateTimeFormat = "d.MM.yyyy HH:mm";
+
+    private readonly ILogger<RtvsWebPlaylistService>? _logger;
+
+    private readonly IHttpClientFactory _httpClientFactory;
+
+    public RtvsWebPlaylistService(IHttpClientFactory httpClientFactory,
+                                  ILogger<RtvsWebPlaylistService>? logger = default)
     {
-        private const string DateTimeFormat = "d.MM.yyyy HH:mm";
+        _httpClientFactory = httpClientFactory
+            ?? throw new ArgumentNullException(nameof(httpClientFactory));
 
-        public async Task<Track> GetLatestTrackAsync(RadioStation radioStation)
-        {
-            if (radioStation == null)
-                throw new ArgumentNullException(nameof(radioStation));
+        _logger = logger;
+    }
 
-            var htmlTracks = await GetHtmlPlaylistTracks(radioStation.PlaylistUrl).ConfigureAwait(false);
+    public async Task<Track?> GetLatestTrackAsync(RadioStation radioStation, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(radioStation);
 
-            if (htmlTracks == null || htmlTracks.Count == 0)
-                return null;
+        var htmlTracks = await GetHtmlPlaylistTracksAsync(radioStation.PlaylistUrl, cancellationToken);
 
-            // get only first track node
-            var tds = htmlTracks.FirstOrDefault(node => node.Name == "tr")?
-                                             .ChildNodes
-                                             .Where(node => node.Name == "td")
-                                             .ToList();
+        if (htmlTracks is null || htmlTracks.Count is 0)
+            return null;
 
-            return tds?.Count != 4
-                            ? null
-                            : CreateTrack(tds);
-        }
+        // get only first track node
+        var tds = htmlTracks.FirstOrDefault(node => node.Name == "tr")?
+                            .ChildNodes
+                            .Where(node => node.Name == "td")
+                            .ToList();
 
-        public async Task<IEnumerable<Track>> GetLatestTracksAsync(RadioStation radioStation, int count = 0)
-        {
-            if (radioStation == null)
-                throw new ArgumentNullException(nameof(radioStation));
+        return tds?.Count is 4 ? CreateTrack(tds) : null;
+    }
 
-            var htmlTracks = await GetHtmlPlaylistTracks(radioStation.PlaylistUrl);
+    public async Task<IEnumerable<Track>> GetLatestTracksAsync(RadioStation radioStation, int count = 0, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(radioStation);
 
-            if (htmlTracks == null)
-                return Enumerable.Empty<Track>();
+        var htmlTracks = await GetHtmlPlaylistTracksAsync(radioStation.PlaylistUrl, cancellationToken);
 
-            // process tracks
-            var tracks = new List<Track>();
-            foreach (var trackNode in htmlTracks)
-            {
-                var tds = trackNode.ChildNodes
-                                                .Where(node => node.Name == "td")
-                                                .ToList();
+        if (htmlTracks is null)
+            return Enumerable.Empty<Track>();
 
-                if (tds.Count != 4)
-                    continue;
+        // process tracks
 
-                tracks.Add(CreateTrack(tds));
-            }
+        return from trackNode in htmlTracks
+               select trackNode.ChildNodes.Where(node => node.Name is "td")
+               into tds
+               where tds.Count() is 4
+               select CreateTrack(tds);
+    }
+    
 
-            return tracks;
-        }
+    private async Task<HtmlNodeCollection?> GetHtmlPlaylistTracksAsync(string url, CancellationToken cancellationToken = default)
+    {
+        using var client = _httpClientFactory.CreateClient();
 
+        var downloadedPage = await client.GetStringAsync(url, cancellationToken);
 
-        private static async Task<HtmlNodeCollection> GetHtmlPlaylistTracks(string url)
-        {
-            using var client = new HttpClient();
+        var html = new HtmlDocument();
 
-            var downloadedPage = await client.GetStringAsync(url).ConfigureAwait(false);
+        html.LoadHtml(downloadedPage);
 
-            var html = new HtmlDocument();
-            html.LoadHtml(downloadedPage);
+        return html.DocumentNode
+                   .Descendants("table")
+                   .FirstOrDefault(descendant => descendant.ContainsAttributeValue("class", "playlist"))?
+                   .ChildNodes
+                   .FindFirst("tbody")
+                   .ChildNodes;
+    }
 
-            return html.DocumentNode
-                       .Descendants("table")
-                       .FirstOrDefault(descendant => descendant.ContainsAttributeValue("class", "playlist"))?
-                       .ChildNodes
-                       .FindFirst("tbody")
-                       .ChildNodes;
-        }
+    private static Track CreateTrack(IEnumerable<HtmlNode> trackDetails)
+    {
+        var trackDetailsList = trackDetails.ToList();
 
-        private static Track CreateTrack(IList<HtmlNode> trackDetails)
-        {
-            // parse track
-            var date = trackDetails[0].InnerText.Trim();
-            var time = trackDetails[1].InnerText.Trim();
-            var artist = trackDetails[2].InnerText;
-            var title = trackDetails[3].InnerText;
+        // parse track
+        var date = trackDetailsList[0].InnerText.Trim();
+        var time = trackDetailsList[1].InnerText.Trim();
+        var artist = trackDetailsList[2].InnerText;
+        var title = trackDetailsList[3].InnerText;
             
-            return new Track
-            {
-                Title = title.Trim(),
-                Artist = artist.Trim(),
-                TimeAired = TypeConverter.ToDateTime($"{date} {time}", DateTimeFormat, DateTime.MinValue)
-            };
-        }
+        return new Track
+        {
+            Title = title.Trim(),
+            Artist = artist.Trim(),
+            TimeAired = Extensions.ToDateTime($"{date} {time}", DateTimeFormat, DateTime.MinValue)
+        };
     }
 }

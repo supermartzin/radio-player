@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Xml;
+﻿using System.Xml;
 using Microsoft.Extensions.Logging;
 
 using Radio.Player.Models;
-using Radio.Player.Services;
+using Radio.Player.Providers.Rtvs.Utilities;
 using Radio.Player.Services.Contracts;
-using Radio.Player.Services.Contracts.Utilities;
 
-namespace Radio.PLayer.Providers.Rtvs;
+namespace Radio.Player.Providers.Rtvs;
 
 public class RtvsApiPlaylistService : IPlaylistService
 {
@@ -23,7 +18,7 @@ public class RtvsApiPlaylistService : IPlaylistService
         _logger = logger;
     }
 
-    public Task<Track?> GetLatestTrackAsync(RadioStation radioStation)
+    public Task<Track?> GetLatestTrackAsync(RadioStation radioStation, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(radioStation);
 
@@ -34,7 +29,7 @@ public class RtvsApiPlaylistService : IPlaylistService
                 var document = new XmlDocument();
                 document.Load(radioStation.PlaylistUrl);
 
-                return document.HasChildNodes 
+                return document.HasChildNodes
                     ? ParseTrack(document)
                     : null;
             }
@@ -44,13 +39,12 @@ public class RtvsApiPlaylistService : IPlaylistService
 
                 return null;
             }
-        });
+        }, cancellationToken);
     }
 
-    public Task<IEnumerable<Track>> GetLatestTracksAsync(RadioStation radioStation, int count = 0)
+    public Task<IEnumerable<Track>> GetLatestTracksAsync(RadioStation radioStation, int count = 0, CancellationToken cancellationToken = default)
     {
-        if (radioStation == null)
-            throw new ArgumentNullException(nameof(radioStation));
+        ArgumentNullException.ThrowIfNull(nameof(radioStation));
 
         return Task.Factory.StartNew(() =>
         {
@@ -59,61 +53,53 @@ public class RtvsApiPlaylistService : IPlaylistService
                 var document = new XmlDocument();
                 document.Load(radioStation.PlaylistUrl);
 
-                return document.HasChildNodes 
+                return document.HasChildNodes
                     ? ParseTracks(document)
                     : Enumerable.Empty<Track>();
             }
             catch (XmlException xmlEx)
             {
-                _logger.LogError(xmlEx, $"Error getting latest tracks in playlist from {radioStation.Name}: {xmlEx.Message}");
+                _logger?.LogError(xmlEx, $"Error getting latest tracks in playlist from {radioStation.Name}: {xmlEx.Message}");
 
                 return Enumerable.Empty<Track>();
             }
-        });
+        }, cancellationToken);
     }
 
 
-    private static Track ParseTrack(XmlDocument xmlDocument)
+    private static Track? ParseTrack(XmlDocument xmlDocument)
     {
         var trackNodes = xmlDocument.DocumentElement?.GetElementsByTagName("programme");
-        if (trackNodes == null || trackNodes.Count <= 0)
+        if (trackNodes is not {Count: > 0})
             return null;
 
         // get only first track
         var firstTrackNode = trackNodes[0];
 
-        var dateTime = firstTrackNode.Attributes?.GetNamedItem("start")?.InnerText;
-        var artist = firstTrackNode.SelectSingleNode("artist")?.InnerText;
-        var title = firstTrackNode.SelectSingleNode("track")?.InnerText;
+        var dateTime = firstTrackNode?.Attributes?.GetNamedItem("start")?.InnerText;
+        var artist = firstTrackNode?.SelectSingleNode("artist")?.InnerText;
+        var title = firstTrackNode?.SelectSingleNode("track")?.InnerText;
 
         return CreateTrack(title, artist, dateTime);
     }
 
     private static IEnumerable<Track> ParseTracks(XmlDocument xmlDocument)
     {
-        var tracks = new List<Track>();
-
         var tracksList = xmlDocument.DocumentElement?.GetElementsByTagName("programme");
-        if (tracksList != null)
-        {
-            foreach (XmlNode childNode in tracksList)
-            {
-                var dateTime = childNode.Attributes?.GetNamedItem("start")?.InnerText;
-                var artist = childNode.SelectSingleNode("artist")?.InnerText;
-                var title = childNode.SelectSingleNode("track")?.InnerText;
+        if (tracksList is null)
+            return Enumerable.Empty<Track>();
 
-                // add to tracks
-                tracks.Add(CreateTrack(title, artist, dateTime));
-            }
-        }
-
-        return tracks;
+        return from XmlNode childNode in tracksList
+               let dateTime = childNode.Attributes?.GetNamedItem("start")?.InnerText
+               let artist = childNode.SelectSingleNode("artist")?.InnerText
+               let title = childNode.SelectSingleNode("track")?.InnerText
+               select CreateTrack(title, artist, dateTime);
     }
 
-    private static Track CreateTrack(string title, string artist, string dateTime) => new()
+    private static Track CreateTrack(string? title, string? artist, string? dateTime) => new()
     {
         Artist = artist,
         Title = title,
-        TimeAired = TypeConverter.ToDateTime(dateTime, DateTimeFormat, DateTime.MinValue)
+        TimeAired = Extensions.ToDateTime(dateTime, DateTimeFormat, DateTime.MinValue)
     };
 }
