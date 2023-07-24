@@ -70,7 +70,7 @@ public class LastFmScrobblingService : ITrackScrobblingService
 
         // scrobble
         var response = await _lastFmClient.Scrobbler.ScrobbleAsync(
-            new Scrobble(track.Artist, string.Empty, track.Title, track.TimeAired));
+            new Scrobble(track.Artist, string.Empty, track.Title, track.TimeAired ?? DateTime.Now));
 
         if (response.Success)
         {

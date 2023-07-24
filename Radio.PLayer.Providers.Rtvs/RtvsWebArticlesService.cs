@@ -99,7 +99,7 @@ public partial class RtvsWebArticlesService : IArticlesService
 
     private static void SanitizeYouTubeLinks(ref string body)
     {
-        var regex = SrcLinksRegex();
+        var regex = new Regex("src=\".*www\\.(.*)?\"");
         foreach (var match in regex.Matches(body).Cast<Match>())
         {
             if (!match.Success)
@@ -115,7 +115,4 @@ public partial class RtvsWebArticlesService : IArticlesService
     private static HtmlNode? GetArticleHeader(HtmlNode root) => root.Elements("div").FirstOrDefault(e => e.ContainsAttributeValue("class", "article-header"));
 
     private static HtmlNode? GetArticleContent(HtmlNode root) => root.Elements("div").FirstOrDefault(e => e.ContainsAttributeValue("class", "article-content"));
-
-    [GeneratedRegex("src=\".*www\\.(.*)?\"")]
-    private static partial Regex SrcLinksRegex();
 }
